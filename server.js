@@ -26,8 +26,8 @@ mongoose.connect('mongodb://localhost:27017/espdata', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error('MongoDB connection error:', err));
+.then(() => console.log('✅ MongoDB connected'))
+.catch(err => console.error('❌ MongoDB connection error:', err));
 
 // Schema
 const sensorSchema = new mongoose.Schema({
@@ -100,7 +100,7 @@ app.get('/ota', (req, res) => {
     const readStream = fs.createReadStream(firmwarePath);
     readStream.pipe(res);
 
-    console.log("Firmware sent to device");
+    console.log("✅ Firmware sent to device");
   } else {
     res.status(404).send('Firmware not found');
   }
@@ -131,7 +131,7 @@ app.post('/upload', upload.single('firmware'), (req, res) => {
     if (req.body.version) {
       firmwareVersion = req.body.version;
     }
-    console.log(`Firmware uploaded: ${req.file.originalname}, Version: ${firmwareVersion}`);
+    console.log(`✅ Firmware uploaded: ${req.file.originalname}, Version: ${firmwareVersion}`);
     res.send('Firmware uploaded successfully');
   } catch (error) {
     console.error('Error uploading firmware:', error);
@@ -151,5 +151,5 @@ app.get('/', (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
