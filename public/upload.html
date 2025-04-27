@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OTA Firmware Upload</title>
+  <link rel="stylesheet" href="upload-style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>OTA Firmware Upload</h1>
+    <p>Please select a <strong>.bin</strong> firmware file.</p>
+    <form action="http://192.168.100.8:3000/upload" method="POST" enctype="multipart/form-data">
+      <input type="file" name="firmware" accept=".bin" required>
+      <button type="submit">Upload Firmware</button>
+    </form>
+  </div>
+</body>
+</html>
