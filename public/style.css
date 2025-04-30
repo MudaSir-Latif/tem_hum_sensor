@@ -464,37 +464,33 @@ body {
   }
 
   .data-history-row {
-    display: flex;
     flex-direction: column;
-    gap: 20px;
+    align-items: stretch;
+    gap: 15px;
   }
 
   .history-card {
     width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
   }
 
-  .gauge-container {
-    position: relative;
-    width: 80px;
-    height: 80px;
-    margin: 0 auto;
-  }
-
-  .gauge-value {
-    font-size: 1rem;
-  }
-
-  .settings-form {
+  .reading-details {
     display: flex;
     flex-direction: column;
+    align-items: stretch;
     gap: 10px;
   }
 
-  .form-group label {
-    font-size: 0.9rem;
+  .reading-info {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
-  .form-group input {
-    font-size: 0.9rem;
+  .chart-body {
+    height: 250px; /* Increased height for better visibility on mobile */
+  }
+  .chart-body canvas {
+    height: 100% !important; /* Ensure the graph scales properly within the container */
   }
 }

@@ -7,13 +7,11 @@ const fs = require('fs');
 const multer = require('multer');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 const corsOptions = {
   origin: '*', // Allow all during testing, update this in production
-  methods: 'GET, POST, PUT, DELETE',
-  allowedHeaders: 'Content-Type, Authorization',
 };
 
 app.use(cors(corsOptions));
@@ -22,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // MongoDB Connection
-mongoose.connect('mongodb://localhost:27017/espdata', {
+mongoose.connect('mongodb+srv://mudassir_123:mudassir_123@cluster0.efhemjl.mongodb.net/sensor_data?retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
@@ -113,7 +111,7 @@ app.get('/ota-metadata', (req, res) => {
 
   res.json({
     version: firmwareVersion,
-    url: `http://localhost:${PORT}/ota`,
+    url: `/ota`,
     exists,
     size: exists ? fs.statSync(firmwarePath).size : 0
   });
@@ -142,14 +140,18 @@ app.post('/upload', upload.single('firmware'), (req, res) => {
 // Serve upload page
 app.get('/upload.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'upload.html'));
+    // Updated to ensure compatibility with Vercel hosting
 });
 
 // Serve home page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    // Updated to ensure compatibility with Vercel hosting
 });
 
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
+
+module.exports = app;
