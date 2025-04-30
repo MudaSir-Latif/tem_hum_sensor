@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // MongoDB Connection
-mongoose.connect('mongodb+srv://mudassir_123:mud@cluster0.efhemjl.mongodb.net/sensor_data?retryWrites=true&w=majority', {
+mongoose.connect('mongodb+srv://mudassir_123:mudassir_123@cluster0.efhemjl.mongodb.net/sensor_data?retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
