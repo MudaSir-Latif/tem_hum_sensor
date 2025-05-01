@@ -10,12 +10,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-const corsOptions = {
-  origin: '*', // Allow all during testing, update this in production
-};
-
+const corsOptions = { origin: '*' };
 app.use(cors(corsOptions));
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -34,12 +30,16 @@ const sensorSchema = new mongoose.Schema({
   humidity: Number,
   timestamp: { type: Date, default: Date.now }
 });
-// const SensorData = mongoose.model('SensorData', sensorSchema);
 const SensorData = mongoose.models.SensorData || mongoose.model('SensorData', sensorSchema);
 
-
-
+// Firmware directory (Vercel needs writable path)
+const firmwareDir = '/tmp'; // ✅ ephemeral storage
 let firmwareVersion = '1.0.0';
+
+// Ensure /tmp exists (redundant but harmless)
+if (!fs.existsSync(firmwareDir)) {
+  fs.mkdirSync(firmwareDir);
+}
 
 // Save sensor data
 app.post('/data', async (req, res) => {
@@ -53,7 +53,7 @@ app.post('/data', async (req, res) => {
   }
 });
 
-// Get sensor data (optionally filtered by date)
+// Get sensor data
 app.get('/data', async (req, res) => {
   try {
     const { date } = req.query;
@@ -61,14 +61,11 @@ app.get('/data', async (req, res) => {
 
     if (date) {
       const parsedDate = new Date(date);
-
       if (!isNaN(parsedDate.getTime())) {
         const start = new Date(parsedDate);
         start.setHours(0, 0, 0, 0);
-
         const end = new Date(parsedDate);
         end.setHours(23, 59, 59, 999);
-
         query.timestamp = { $gte: start, $lte: end };
       } else {
         return res.status(400).send('Invalid date format');
@@ -83,28 +80,20 @@ app.get('/data', async (req, res) => {
   }
 });
 
-
-// Firmware directory
-const firmwareDir = path.join(__dirname, 'firmware');
-if (!fs.existsSync(firmwareDir)) {
-  fs.mkdirSync(firmwareDir);
-}
-
 // Serve firmware binary
 app.get('/ota', (req, res) => {
-  const firmwarePath = path.join('/tmp', 'esp32_firmware.bin'); // Updated to serve from /tmp
+  const firmwarePath = path.join(firmwareDir, 'esp32_firmware.bin');
 
   if (fs.existsSync(firmwarePath)) {
     const stats = fs.statSync(firmwarePath);
     res.setHeader('Content-Type', 'application/octet-stream');
     res.setHeader('Content-Length', stats.size);
     res.setHeader('Content-Disposition', 'attachment; filename="esp32_firmware.bin"');
-
     const readStream = fs.createReadStream(firmwarePath);
     readStream.pipe(res);
-
-    console.log("✅ Firmware sent to device");
+    console.log('✅ Firmware sent to device');
   } else {
+    console.error('❌ Firmware not found at', firmwarePath);
     res.status(404).send('Firmware not found');
   }
 });
@@ -124,12 +113,8 @@ app.get('/ota-metadata', (req, res) => {
 
 // Upload firmware
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, '/tmp'); // Changed target folder for storing files to /tmp
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname); // Using original filename
-  }
+  destination: (req, file, cb) => cb(null, firmwareDir),
+  filename: (req, file, cb) => cb(null, 'esp32_firmware.bin'),
 });
 const upload = multer({ storage });
 
@@ -149,13 +134,11 @@ app.post('/upload', upload.single('firmware'), (req, res) => {
 // Serve upload page
 app.get('/upload.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'upload.html'));
-    // Updated to ensure compatibility with Vercel hosting
 });
 
 // Serve home page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
-    // Updated to ensure compatibility with Vercel hosting
 });
 
 // Start server
