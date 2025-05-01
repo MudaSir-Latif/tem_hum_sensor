@@ -35,7 +35,7 @@ const sensorSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now }
 });
 // const SensorData = mongoose.model('SensorData', sensorSchema);
-const SensorData = mongoose.models.SensorData || mongoose.model('SensorData', sen);
+const SensorData = mongoose.models.SensorData || mongoose.model('SensorData', sensorSchema);
 
 
 // Firmware directory
