@@ -34,7 +34,9 @@ const sensorSchema = new mongoose.Schema({
   humidity: Number,
   timestamp: { type: Date, default: Date.now }
 });
-const SensorData = mongoose.model('SensorData', sensorSchema);
+// const SensorData = mongoose.model('SensorData', sensorSchema);
+const SensorData = mongoose.models.SensorData || mongoose.model('SensorData', sensorSchema);
+
 
 // Firmware directory
 const firmwareDir = path.join(__dirname, 'firmware');
@@ -120,8 +122,12 @@ app.get('/ota-metadata', (req, res) => {
 
 // Upload firmware
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, firmwareDir),
-  filename: (req, file, cb) => cb(null, 'esp32_firmware.bin')
+  destination: (req, file, cb) => {
+    cb(null, '/tmp'); // Changed target folder for storing files to /tmp
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname); // Using original filename
+  }
 });
 const upload = multer({ storage });
 
