@@ -130,23 +130,23 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Update firmware upload endpoint
-app.post('/upload', upload.single('firmware'), (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).send('No file uploaded.');
-    }
+// app.post('/upload', upload.single('firmware'), (req, res) => {
+//   try {
+//     if (!req.file) {
+//       return res.status(400).send('No file uploaded.');
+//     }
 
-    if (req.body.version) {
-      firmwareVersion = req.body.version;
-    }
+//     if (req.body.version) {
+//       firmwareVersion = req.body.version;
+//     }
 
-    console.log(`✅ Firmware uploaded: ${req.file.originalname}, Version: ${firmwareVersion}`);
-    res.send('Firmware uploaded successfully');
-  } catch (error) {
-    console.error('Error uploading firmware:', error);
-    res.status(500).send('Error uploading firmware');
-  }
-});
+//     console.log(`✅ Firmware uploaded: ${req.file.originalname}, Version: ${firmwareVersion}`);
+//     res.send('Firmware uploaded successfully');
+//   } catch (error) {
+//     console.error('Error uploading firmware:', error);
+//     res.status(500).send('Error uploading firmware');
+//   }
+// });
 
 // Serve upload page
 app.get('/upload.html', (req, res) => {
