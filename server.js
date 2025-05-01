@@ -118,18 +118,28 @@ app.get('/ota-metadata', (req, res) => {
   });
 });
 
-// Upload firmware
+// Update multer storage to use /tmp directory for Vercel compatibility
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, firmwareDir),
-  filename: (req, file, cb) => cb(null, 'esp32_firmware.bin')
+  destination: (req, file, cb) => {
+    cb(null, '/tmp'); // Use /tmp for temporary file storage
+  },
+  filename: (req, file, cb) => {
+    cb(null, 'esp32_firmware.bin'); // Save with a fixed filename
+  },
 });
 const upload = multer({ storage });
 
+// Update firmware upload endpoint
 app.post('/upload', upload.single('firmware'), (req, res) => {
   try {
+    if (!req.file) {
+      return res.status(400).send('No file uploaded.');
+    }
+
     if (req.body.version) {
       firmwareVersion = req.body.version;
     }
+
     console.log(`✅ Firmware uploaded: ${req.file.originalname}, Version: ${firmwareVersion}`);
     res.send('Firmware uploaded successfully');
   } catch (error) {
