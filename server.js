@@ -90,15 +90,9 @@ if (!fs.existsSync(firmwareDir)) {
   fs.mkdirSync(firmwareDir);
 }
 
-// Temporary directory
-const tempDir = 'C:/Temp';
-if (!fs.existsSync(tempDir)) {
-  fs.mkdirSync(tempDir);
-}
-
 // Serve firmware binary
 app.get('/ota', (req, res) => {
-  const firmwarePath = path.join(tempDir, 'esp32_firmware.bin'); // Updated to serve from C:/Temp
+  const firmwarePath = path.join('/tmp', 'esp32_firmware.bin'); // Updated to serve from /tmp
 
   if (fs.existsSync(firmwarePath)) {
     const stats = fs.statSync(firmwarePath);
@@ -131,7 +125,7 @@ app.get('/ota-metadata', (req, res) => {
 // Upload firmware
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, tempDir); // Changed target folder for storing files to C:/Temp
+    cb(null, '/tmp'); // Changed target folder for storing files to /tmp
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname); // Using original filename
