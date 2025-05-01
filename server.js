@@ -35,7 +35,7 @@ const sensorSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now }
 });
 // const SensorData = mongoose.model('SensorData', sensorSchema);
-const SensorData = mongoose.models.SensorData || mongoose.model('SensorData', sensorSchema);
+const SensorData = mongoose.models.SensorData || mongoose.model('SensorData', sen);
 
 
 // Firmware directory
@@ -90,7 +90,7 @@ app.get('/data', async (req, res) => {
 
 // Serve firmware binary
 app.get('/ota', (req, res) => {
-  const firmwarePath = path.join(firmwareDir, 'esp32_firmware.bin');
+  const firmwarePath = path.join('/tmp', 'esp32_firmware.bin'); // Updated to serve from /tmp
 
   if (fs.existsSync(firmwarePath)) {
     const stats = fs.statSync(firmwarePath);
