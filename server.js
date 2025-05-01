@@ -21,8 +21,8 @@ mongoose.connect('mongodb+srv://mudassir_123:mudassir_123@cluster0.efhemjl.mongo
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log('✅ MongoDB connected'))
-.catch(err => console.error('❌ MongoDB connection error:', err));
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.error('MongoDB connection error:', err));
 
 // Schema
 const sensorSchema = new mongoose.Schema({
@@ -33,7 +33,7 @@ const sensorSchema = new mongoose.Schema({
 const SensorData = mongoose.models.SensorData || mongoose.model('SensorData', sensorSchema);
 
 // Firmware directory (Vercel needs writable path)
-const firmwareDir = '/tmp'; // ✅ ephemeral storage
+const firmwareDir = '/tmp'; //  ephemeral storage
 let firmwareVersion = '1.0.0';
 
 // Ensure /tmp exists (redundant but harmless)
@@ -91,9 +91,9 @@ app.get('/ota', (req, res) => {
     res.setHeader('Content-Disposition', 'attachment; filename="esp32_firmware.bin"');
     const readStream = fs.createReadStream(firmwarePath);
     readStream.pipe(res);
-    console.log('✅ Firmware sent to device');
+    console.log('Firmware sent to device');
   } else {
-    console.error('❌ Firmware not found at', firmwarePath);
+    console.error('Firmware not found at', firmwarePath);
     res.status(404).send('Firmware not found');
   }
 });
@@ -123,11 +123,11 @@ app.post('/upload', upload.single('firmware'), (req, res) => {
     if (req.body.version) {
       firmwareVersion = req.body.version;
     }
-    console.log(`✅ Firmware uploaded: ${req.file.originalname}, Version: ${firmwareVersion}`);
-    res.send('Firmware uploaded successfully');
+    console.log(` Firmware uploaded: ${req.file.originalname}, Version: ${firmwareVersion}`);
+    res.send('<script>alert("Firmware uploaded successfully"); setTimeout(() => { window.location.href = "/"; }, 1000);</script>');
   } catch (error) {
     console.error('Error uploading firmware:', error);
-    res.status(500).send('Error uploading firmware');
+    res.status(500).send('<script>alert("Error uploading firmware"); setTimeout(() => { window.location.href = "/"; }, 1000);</script>');
   }
 });
 
@@ -143,7 +143,7 @@ app.get('/', (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`Server running at http://localhost:${PORT}`);
 });
 
 module.exports = app;
